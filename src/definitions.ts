@@ -5,5 +5,5 @@ declare module "@capacitor/core" {
 }
 
 export interface CapacitorFileChooserPlugin {
-  echo(options: { value: string }): Promise<{value: string}>;
+  picker(options: { action: string, startDirectory: string }): Promise<{paths: string}>;
 }
