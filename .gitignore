@@ -6,3 +6,5 @@ dist/
 android/.gradle/
 
 android/.idea/
+
+android/build/

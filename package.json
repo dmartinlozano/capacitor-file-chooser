@@ -5,9 +5,7 @@
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
-    "start": "cd android && ./gradlew assembleDebug && ./gradlew installDebug && cd ..",
-    "build": "npm run clean && cd android && ./gradlew assembleDebug && cd .. && tsc -p tsconfig.plugin.json ",
-    "clean": "rimraf ./dist",
+    "build": "rm -rf ./dist && tsc -p tsconfig.plugin.json && cd android && ./gradlew assembleDebug && cd ..",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build"
   },

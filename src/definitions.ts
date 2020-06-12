@@ -1,9 +1,10 @@
+import "@capacitor/core";
 declare module "@capacitor/core" {
   interface PluginRegistry {
-    CapacitorFileChooser: CapacitorFileChooserPlugin;
+    CapacitorFileChooser?: CapacitorFileChooser;
   }
 }
 
-export interface CapacitorFileChooserPlugin {
-  picker(options: { action: string, startDirectory: string }): Promise<{paths: string}>;
+export interface CapacitorFileChooser {
+  picker(options: { action: string, startDirectory: string }): Promise<any>;
 }

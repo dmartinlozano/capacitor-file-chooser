@@ -5,11 +5,8 @@ import org.json.JSONArray;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Bundle;
-import android.net.Uri;
-import java.util.ArrayList;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import android.os.Environment;
-import android.os.Build;
 import android.content.ClipData;
 
 public class DialogShowPicker extends Activity{

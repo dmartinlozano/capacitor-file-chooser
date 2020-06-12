@@ -5,13 +5,23 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import android.Manifest;
-import android.content.Intent;
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Environment;
+
+import android.content.Intent;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
+import com.getcapacitor.PluginMethod;
+
+import org.json.JSONArray;
 
 @NativePlugin(
         permissions={
@@ -22,37 +32,69 @@ import com.getcapacitor.PluginCall;
 )
 public class CapacitorFileChooser extends Plugin {
 
-    protected static final int REQUEST = 12345;
+    protected static final int REQUEST = 1;
 
     @PluginMethod()
     public void picker(PluginCall call) {
 
-        //StorageChooserView.setScSecondaryActionColor(accentcolor);
-        String action = call.getString("action", "showPicker");
-        String startDirectory = call.getString("startDirectory", null);
+        String mode = call.getString("mode", "showPicker");
+        String initPath = call.getString("initPath", null);
 
-        Intent intent = new Intent("org.dmartin.capacitorFileChooser.DialogShowPicker");
-        intent.putExtra("action", action);
-        intent.putExtra("startDirectory", startDirectory);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Intent i = new Intent(getContext(), FilePickerActivity.class);
+        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        saveCall(call);
-        startActivityForResult(call, intent, REQUEST);
+        if(initPath.equals(null)){
+            i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+        }else{
+            i.putExtra(FilePickerActivity.EXTRA_START_PATH, initPath);
+        }
+
+        if ("showPicker".equals(mode)) {
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+        }else if("showMultiFilepicker".equals(mode)){
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, true);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+        }else if("showFolderpicker".equals(mode)){
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
+        }else if("showMultiFolderpicker".equals(mode)){
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, true);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
+        }else if("showMixedPicker".equals(mode)){
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, true);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE_AND_DIR);
+        }else if("showCreatefile".equals(mode)){
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_NEW_FILE);
+        }
+        startActivityForResult(call, i, REQUEST);
     }
 
     @Override
     protected void handleOnActivityResult(int requestCode, int resultCode, Intent data) {
-
         super.handleOnActivityResult(requestCode, resultCode, data);
+        JSONArray jsonArray = new JSONArray();
+        if (requestCode == REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
+                    ClipData clip = data.getClipData();
+                    if (clip != null) {
+                        for (int i = 0; i < clip.getItemCount(); i++) {
+                            jsonArray.put(clip.getItemAt(i).getUri().toString());
+                        }
+                    }
+            } else {
+                jsonArray.put(data.getData().toString());
+            }
+        }
         PluginCall savedCall = getSavedCall();
         if (savedCall == null) {
             return;
         }
         if (requestCode == REQUEST) {
             JSObject ret = new JSObject();
-            ret.put("paths", data.getStringExtra("paths"));
+            ret.put("paths", jsonArray.toString());
             savedCall.resolve(ret);
         }
     }
-
 }

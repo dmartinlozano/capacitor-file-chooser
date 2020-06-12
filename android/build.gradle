@@ -50,4 +50,5 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation 'com.nononsenseapps:filepicker:3.1.0'
+    implementation 'com.android.support:design:22.2.0'
 }
