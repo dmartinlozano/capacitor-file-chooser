@@ -1,0 +1,49 @@
+{
+  "name": "capacitor-file-chooser",
+  "version": "0.0.1",
+  "description": "File Chooser for Ionic Capacitor (only Android)",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "rm -rf ./dist && tsc -p tsconfig.plugin.json && cd android && ./gradlew assembleDebug && cd ..",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "dmartinlozano",
+  "license": "Affero",
+  "dependencies": {
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.0",
+    "typescript": "^3.2.4",
+    "@capacitor/ios": "latest",
+    "@capacitor/android": "latest"
+  },
+  "files": [
+    "dist/",
+    "ios/",
+    "android/",
+    "CapacitorFileChooser.podspec"
+  ],
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native"
+  ],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmartinlozano/capacitor-file-chooser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dmartinlozano/capacitor-file-chooser.git/issues"
+  }
+}
